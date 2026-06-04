@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pl">
+<head th:replace="~{fragments :: head('Logowanie')}"></head>
+<body>
+<div class="container" style="max-width: 420px;">
+    <div class="text-center my-4">
+        <h3 class="mb-1">SWS</h3>
+        <div class="label-dim">Panel pracownika</div>
+    </div>
+
+    <div th:if="${param.error}" class="alert alert-danger">Nieprawidłowy login lub PIN.</div>
+    <div th:if="${param.wylogowano}" class="alert alert-success">Wylogowano poprawnie.</div>
+
+    <div class="card">
+        <div class="card-body">
+            <form method="post" th:action="@{/login}">
+                <div class="mb-3">
+                    <label class="form-label" for="username">Nr Pracownika</label>
+                    <input type="text" id="username" name="username" class="form-control" autofocus required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="password">PIN</label>
+                    <input type="password" id="password" name="password" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Zaloguj</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card mt-3">
+        <div class="card-body label-dim">
+            <div class="fw-semibold mb-1">Konta demonstracyjne:</div>
+            Konsultant - login <code>0001</code>, PIN <code>1234</code><br>
+            Kierownik - login <code>9999</code>, PIN <code>4321</code>
+        </div>
+    </div>
+</div>
+</body>
+</html>

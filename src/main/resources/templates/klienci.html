@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pl">
+<head th:replace="~{fragments :: head('Klienci')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+<div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="mb-0">Klienci</h3>
+        <a th:if="${isKonsultant}" class="btn btn-primary btn-sm" th:href="@{/klienci/rejestracja}">+ Zarejestruj klienta</a>
+    </div>
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                <tr><th>Numer</th><th>Imię i nazwisko</th><th>Prawo jazdy</th><th class="text-end">Akcja</th></tr>
+                </thead>
+                <tbody>
+                <tr th:each="k : ${klienci}">
+                    <td th:text="${k.numerKlienta}"></td>
+                    <td th:text="${k.osoba != null ? k.osoba.imie + ' ' + k.osoba.nazwisko : '-'}"></td>
+                    <td>
+                        <span th:if="${k.dataWaznosciPrawaJazdy != null and !k.dataWaznosciPrawaJazdy.isBefore(T(java.time.LocalDate).now())}"
+                              class="badge bg-success"
+                              th:text="'Ważne do ' + ${#temporals.format(k.dataWaznosciPrawaJazdy, 'dd.MM.yyyy')}"></span>
+                        <span th:unless="${k.dataWaznosciPrawaJazdy != null and !k.dataWaznosciPrawaJazdy.isBefore(T(java.time.LocalDate).now())}"
+                              class="badge bg-danger">Nieważne</span>
+                    </td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-outline-primary" th:href="@{/klienci/{id}(id=${k.id})}">Szczegóły</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

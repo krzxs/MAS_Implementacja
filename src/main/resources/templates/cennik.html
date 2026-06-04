@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pl">
+<head th:replace="~{fragments :: head('Cennik')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+<div class="container my-4">
+    <h3 class="mb-1">Cennik - mnożniki kategorii</h3>
+    <p class="label-dim">Mnożnik kategorii wpływa na koszt całkowity wypożyczenia (stawka dzienna pojazdu × mnożnik × liczba dni). Dostęp tylko dla Kierownika.</p>
+
+    <div th:if="${param.zapisano}" class="alert alert-success">Zapisano zmiany w cenniku.</div>
+
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                <tr>
+                    <th>Kategoria</th><th>Opis</th><th style="width: 240px;">Mnożnik ceny</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="kat : ${kategorie}">
+                    <td th:text="${kat.nazwa}"></td>
+                    <td class="label-dim" th:text="${kat.opis}"></td>
+                    <td>
+                        <form method="post" th:action="@{/cennik/{id}(id=${kat.id})}" class="row g-2 align-items-center">
+                            <div class="col-auto">
+                                <input type="number" step="0.01" min="0" name="mnoznikCeny"
+                                       class="form-control form-control-sm" th:value="${kat.mnoznikCeny}" required>
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-sm btn-primary">Zapisz</button>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

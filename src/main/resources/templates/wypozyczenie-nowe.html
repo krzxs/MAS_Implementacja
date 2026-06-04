@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pl">
+<head th:replace="~{fragments :: head('Nowe wypożyczenie')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+<div class="container my-4">
+    <h3 class="mb-3">Nowe wypożyczenie</h3>
+
+    <div th:if="${blad}" class="alert alert-danger" th:text="${blad}"></div>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="label-dim">Pojazd</div>
+            <div class="fs-5"
+                 th:text="${pojazd.marka + ' ' + pojazd.model + ' (' + pojazd.numerRejestracyjny + ')'}"></div>
+            <div class="label-dim">
+                <span th:text="${pojazd.typPojazdu}"></span> ·
+                <span th:text="${pojazd.kategoria != null ? pojazd.kategoria.nazwa : ''}"></span> ·
+                <span th:text="${pojazd.stawkaDzienna + ' zł/dzień (stawka bazowa)'}"></span>
+            </div>
+        </div>
+    </div>
+
+    <form method="post" th:action="@{/wypozyczenie}" th:object="${form}">
+        <input type="hidden" th:field="*{pojazdId}">
+
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Klient</label>
+                <select class="form-select" th:field="*{klientId}" required>
+                    <option value="">-- wybierz klienta --</option>
+                    <option th:each="k : ${klienci}" th:value="${k.id}"
+                            th:text="${k.osoba.imie + ' ' + k.osoba.nazwisko + ' (' + k.numerKlienta + ')'}"></option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Pracownik obsługujący</label>
+                <input type="text" class="form-control" readonly
+                       th:value="${zalogowany != null ? zalogowany.osoba.imie + ' ' + zalogowany.osoba.nazwisko + ' - ' + zalogowany.stanowisko.opis : ''}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Data od</label>
+                <input type="date" class="form-control" th:field="*{dataOd}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Data do</label>
+                <input type="date" class="form-control" th:field="*{dataDo}">
+            </div>
+        </div>
+
+        <div class="row g-3 mt-1">
+            <div class="col-md-6">
+                <label class="form-label">Dodatki</label>
+                <div class="form-check" th:each="d : ${dodatki}">
+                    <input class="form-check-input" type="checkbox" th:field="*{dodatkiIds}"
+                           th:value="${d.id}" th:id="'dod-' + ${d.id}">
+                    <label class="form-check-label" th:for="'dod-' + ${d.id}"
+                           th:text="${d.nazwa + ' (' + d.cenaZaDzien + ' zł/dzień)'}"></label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Ubezpieczenie</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" th:field="*{ubezpieczenieId}" th:value="0"
+                           id="ub-brak">
+                    <label class="form-check-label" for="ub-brak">Brak</label>
+                </div>
+                <div class="form-check" th:each="u : ${ubezpieczenia}">
+                    <input class="form-check-input" type="radio" th:field="*{ubezpieczenieId}"
+                           th:value="${u.id}" th:id="'ub-' + ${u.id}">
+                    <label class="form-check-label" th:for="'ub-' + ${u.id}"
+                           th:text="${u.typ.opis + ' - ' + u.zakres + ' (' + u.skladkaDzienna + ' zł/dzień)'}"></label>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-3">
+            <label class="form-label">Metoda płatności</label>
+            <div>
+                <div class="form-check form-check-inline" th:each="m : ${metody}">
+                    <input class="form-check-input" type="radio" th:field="*{metodaPlatnosci}"
+                           th:value="${m.name()}" th:id="'met-' + ${m}">
+                    <label class="form-check-label" th:for="'met-' + ${m}" th:text="${m.opis}"></label>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">Utwórz wypożyczenie i przyjmij płatność</button>
+            <a th:href="@{/flota}" class="btn btn-link">Anuluj</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

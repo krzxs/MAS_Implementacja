@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pl">
+<head th:replace="~{fragments :: head('Rejestracja klienta')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+<div class="container my-4" style="max-width: 720px;">
+    <h3 class="mb-3">Rejestracja klienta</h3>
+
+    <div th:if="${blad}" class="alert alert-danger" th:text="${blad}"></div>
+
+    <form method="post" th:action="@{/klienci/rejestracja}" th:object="${form}">
+        <div class="card">
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Imię</label>
+                        <input type="text" class="form-control" th:field="*{imie}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Nazwisko</label>
+                        <input type="text" class="form-control" th:field="*{nazwisko}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">E-mail</label>
+                        <input type="email" class="form-control" th:field="*{email}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Telefon</label>
+                        <input type="text" class="form-control" th:field="*{telefon}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Data urodzenia</label>
+                        <input type="date" class="form-control" th:field="*{dataUrodzenia}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Numer prawa jazdy</label>
+                        <input type="text" class="form-control" th:field="*{numerPrawaJazdy}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Prawo jazdy ważne do</label>
+                        <input type="date" class="form-control" th:field="*{dataWaznosciPrawaJazdy}" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-3">
+            <button type="submit" class="btn btn-primary">Zarejestruj klienta</button>
+            <a th:href="@{/klienci}" class="btn btn-link">Anuluj</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

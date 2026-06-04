@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pl">
+<head th:replace="~{fragments :: head('Flota pojazdów')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+<div class="container my-4">
+    <h3 class="mb-3">Flota pojazdów</h3>
+
+    <div th:if="${param.zarezerwowano}" class="alert alert-success">Rezerwacja została utworzona.</div>
+
+    <form method="get" th:action="@{/flota}" class="row g-2 align-items-end mb-3">
+        <div class="col-auto">
+            <label class="form-label label-dim mb-1">Oddział</label>
+            <select name="oddzialId" class="form-select form-select-sm">
+                <option value="">Wszystkie oddziały</option>
+                <option th:each="o : ${oddzialy}" th:value="${o.id}" th:text="${o.nazwa}"
+                        th:selected="${wybranyOddzial != null and wybranyOddzial == o.id}"></option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-sm btn-outline-secondary">Filtruj</button>
+        </div>
+    </form>
+
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                <tr>
+                    <th>Rejestracja</th><th>Typ</th><th>Marka i model</th><th>Kategoria</th>
+                    <th>Oddział</th><th class="text-end">Stawka/dzień</th><th>Status</th><th class="text-end">Akcja</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="poj : ${pojazdy}">
+                    <td th:text="${poj.numerRejestracyjny}"></td>
+                    <td th:text="${poj.typPojazdu}"></td>
+                    <td th:text="${poj.marka + ' ' + poj.model}"></td>
+                    <td th:text="${poj.kategoria != null ? poj.kategoria.nazwa : '-'}"></td>
+                    <td th:text="${poj.oddzial != null ? poj.oddzial.nazwa : '-'}"></td>
+                    <td class="text-end" th:text="${poj.stawkaDzienna + ' zł'}"></td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${poj.status.name()=='DOSTEPNY'} ? 'bg-success' : (${poj.status.name()=='WYPOZYCZONY'} ? 'bg-warning text-dark' : (${poj.status.name()=='W_SERWISIE'} ? 'bg-secondary' : (${poj.status.name()=='ZAREZERWOWANY'} ? 'bg-info text-dark' : 'bg-dark')))"
+                              th:text="${poj.status.opis}">Status</span>
+                    </td>
+                    <td class="text-end">
+                        <a th:if="${poj.status.name()=='DOSTEPNY' and isKonsultant}" class="btn btn-sm btn-primary"
+                           th:href="@{/wypozyczenie/nowe(pojazdId=${poj.id})}">Wypożycz</a>
+                        <a th:if="${poj.status.name()=='DOSTEPNY' and isKonsultant}" class="btn btn-sm btn-outline-primary"
+                           th:href="@{/rezerwacja/nowa(pojazdId=${poj.id})}">Zarezerwuj</a>
+                        <form th:if="${poj.status.name()=='DOSTEPNY' and isKierownik}" method="post"
+                              th:action="@{/flota/{id}/serwis(id=${poj.id})}" class="d-inline">
+                            <button class="btn btn-sm btn-outline-secondary">Serwis</button>
+                        </form>
+                        <span th:unless="${poj.status.name()=='DOSTEPNY'}" class="label-dim">-</span>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(pojazdy)}">
+                    <td colspan="8" class="text-center label-dim py-3">Brak pojazdów do wyświetlenia.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pl">
+<head th:replace="~{fragments :: head('Nowa rezerwacja')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+<div class="container my-4" style="max-width: 720px;">
+    <h3 class="mb-3">Rezerwacja samochodu</h3>
+
+    <div th:if="${blad}" class="alert alert-danger" th:text="${blad}"></div>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="label-dim">Pojazd</div>
+            <div class="fs-5" th:text="${pojazd.marka + ' ' + pojazd.model + ' (' + pojazd.numerRejestracyjny + ')'}"></div>
+            <div class="label-dim">
+                <span th:text="${pojazd.typPojazdu}"></span> ·
+                <span th:text="${pojazd.kategoria != null ? pojazd.kategoria.nazwa : ''}"></span>
+            </div>
+        </div>
+    </div>
+
+    <form method="post" th:action="@{/rezerwacja}" th:object="${form}">
+        <input type="hidden" th:field="*{pojazdId}">
+        <div class="row g-3">
+            <div class="col-md-12">
+                <label class="form-label">Klient</label>
+                <select class="form-select" th:field="*{klientId}">
+                    <option value="">-- wybierz klienta --</option>
+                    <option th:each="k : ${klienci}" th:value="${k.id}"
+                            th:text="${k.osoba.imie + ' ' + k.osoba.nazwisko + ' (' + k.numerKlienta + ')'}"></option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Planowana data odbioru</label>
+                <input type="date" class="form-control" th:field="*{dataOd}">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Planowana data zwrotu</label>
+                <input type="date" class="form-control" th:field="*{dataDo}">
+            </div>
+        </div>
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">Zarezerwuj</button>
+            <a th:href="@{/flota}" class="btn btn-link">Anuluj</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

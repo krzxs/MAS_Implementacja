@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pl">
+<head th:replace="~{fragments :: head('Karta klienta')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+<div class="container my-4">
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <h4 class="mb-1" th:text="${klient.osoba != null ? klient.osoba.imie + ' ' + klient.osoba.nazwisko : klient.numerKlienta}"></h4>
+            <div class="label-dim">
+                <span th:text="'Nr klienta: ' + ${klient.numerKlienta}"></span>
+                <span th:if="${klient.osoba != null}" th:text="' · ' + ${klient.osoba.email} + ' · ' + ${klient.osoba.telefon}"></span>
+            </div>
+            <div class="mt-2">
+                <span th:if="${klient.dataWaznosciPrawaJazdy != null and !klient.dataWaznosciPrawaJazdy.isBefore(T(java.time.LocalDate).now())}"
+                      class="badge bg-success"
+                      th:text="'Prawo jazdy ważne do ' + ${#temporals.format(klient.dataWaznosciPrawaJazdy, 'dd.MM.yyyy')}"></span>
+                <span th:unless="${klient.dataWaznosciPrawaJazdy != null and !klient.dataWaznosciPrawaJazdy.isBefore(T(java.time.LocalDate).now())}"
+                      class="badge bg-danger">Prawo jazdy nieważne</span>
+            </div>
+        </div>
+    </div>
+
+    <h5 class="mb-2">Wypożyczenia klienta</h5>
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                <tr><th>Numer</th><th>Pojazd</th><th>Okres</th><th class="text-center">Dni</th>
+                    <th class="text-end">Koszt</th><th>Status</th><th class="text-end">Akcja</th></tr>
+                </thead>
+                <tbody>
+                <tr th:each="w : ${klient.wypozyczenia}">
+                    <td th:text="${w.numerWypozyczenia}"></td>
+                    <td th:text="${w.pojazd.marka + ' ' + w.pojazd.model}"></td>
+                    <td>
+                        <span th:text="${#temporals.format(w.dataOd, 'dd.MM.yyyy')}"></span> –
+                        <span th:text="${#temporals.format(w.dataDo, 'dd.MM.yyyy')}"></span>
+                    </td>
+                    <td class="text-center" th:text="${w.liczbaDni}"></td>
+                    <td class="text-end" th:text="${w.kosztCalkowity + ' zł'}"></td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${w.status.name()=='AKTYWNE'} ? 'bg-warning text-dark' : (${w.status.name()=='ZAKONCZONE'} ? 'bg-success' : 'bg-secondary')"
+                              th:text="${w.status.opis}">Status</span>
+                    </td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-outline-primary" th:href="@{/wypozyczenie/{id}(id=${w.id})}">Otwórz</a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(klient.wypozyczenia)}">
+                    <td colspan="7" class="text-center label-dim py-3">Ten klient nie ma jeszcze żadnych wypożyczeń.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <p class="label-dim mt-2">
+        Lista wypożyczeń pobrana przez nawigację po asocjacji Klient → Wypożyczenie
+        (kolekcja obiektowa, bez zapytania filtrującego ekstensję).
+    </p>
+
+    <div class="mt-3">
+        <a th:href="@{/klienci}" class="btn btn-link">← Wróć do listy klientów</a>
+    </div>
+</div>
+</body>
+</html>
