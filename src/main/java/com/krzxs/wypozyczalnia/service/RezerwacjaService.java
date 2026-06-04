@@ -5,6 +5,7 @@ import com.krzxs.wypozyczalnia.model.Klient;
 import com.krzxs.wypozyczalnia.model.Pojazd;
 import com.krzxs.wypozyczalnia.model.Rezerwacja;
 import com.krzxs.wypozyczalnia.model.enums.StatusPojazdu;
+import com.krzxs.wypozyczalnia.model.enums.StatusRezerwacji;
 import com.krzxs.wypozyczalnia.repository.KlientRepository;
 import com.krzxs.wypozyczalnia.repository.PojazdRepository;
 import com.krzxs.wypozyczalnia.repository.RezerwacjaRepository;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -28,6 +30,11 @@ public class RezerwacjaService {
         this.rezerwacjaRepository = rezerwacjaRepository;
         this.klientRepository = klientRepository;
         this.pojazdRepository = pojazdRepository;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Rezerwacja> lista() {
+        return rezerwacjaRepository.findAll();
     }
 
     @Transactional
@@ -60,6 +67,36 @@ public class RezerwacjaService {
         pojazd.setStatus(StatusPojazdu.ZAREZERWOWANY);
 
         return rezerwacjaRepository.save(rezerwacja);
+    }
+
+    @Transactional
+    public void anuluj(Long id) {
+        Rezerwacja rezerwacja = rezerwacjaRepository.findById(id)
+                .orElseThrow(() -> new BusinessException("Nie znaleziono rezerwacji."));
+
+        if (rezerwacja.getStatus() == StatusRezerwacji.ANULOWANA) {
+            throw new BusinessException("Rezerwacja jest już anulowana.");
+        }
+        if (rezerwacja.getStatus() == StatusRezerwacji.ZREALIZOWANA) {
+            throw new BusinessException("Nie można anulować zrealizowanej rezerwacji.");
+        }
+        if (rezerwacja.getWypozyczenie() != null) {
+            throw new BusinessException("Rezerwacja została zamieniona na wypożyczenie i nie może być anulowana.");
+        }
+
+        rezerwacja.anuluj();
+
+        Pojazd pojazd = rezerwacja.getPojazd();
+        if (pojazd != null && pojazd.getStatus() == StatusPojazdu.ZAREZERWOWANY && brakAktywnychRezerwacji(pojazd)) {
+            pojazd.setStatus(StatusPojazdu.DOSTEPNY);
+        }
+
+        rezerwacjaRepository.save(rezerwacja);
+    }
+
+    private boolean brakAktywnychRezerwacji(Pojazd pojazd) {
+        return pojazd.getRezerwacje().stream()
+                .noneMatch(r -> r.getStatus() == StatusRezerwacji.POTWIERDZONA || r.getStatus() == StatusRezerwacji.OCZEKUJACA);
     }
 
     private String generujNumer() {

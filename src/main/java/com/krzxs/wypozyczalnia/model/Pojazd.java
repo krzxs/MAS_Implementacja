@@ -183,4 +183,12 @@ public abstract class Pojazd {
     public void skierujDoSerwisu() {
         this.status = StatusPojazdu.W_SERWISIE;
     }
+
+    public void przywrocZSerwisu() {
+        this.status = StatusPojazdu.DOSTEPNY;
+    }
+
+    public boolean maPowiazania() {
+        return !wypozyczenia.isEmpty() || !rezerwacje.isEmpty();
+    }
 }

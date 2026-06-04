@@ -90,7 +90,7 @@
         </ul>
     </div>
 
-    <div class="card" th:if="${w.status.name()=='AKTYWNE' and isKierownik}">
+    <div class="card" th:if="${w.status.name()=='AKTYWNE' and isKonsultant}">
         <div class="card-body">
             <h6 class="card-title">Zwrot pojazdu</h6>
             <form method="post" th:action="@{/wypozyczenie/{id}/zwrot(id=${w.id})}">

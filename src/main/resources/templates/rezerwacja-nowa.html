@@ -24,18 +24,18 @@
         <div class="row g-3">
             <div class="col-md-12">
                 <label class="form-label">Klient</label>
-                <select class="form-select" th:field="*{klientId}">
+                <select class="form-select" th:field="*{klientId}" required>
                     <option value="">-- wybierz klienta --</option>
                     <option th:each="k : ${klienci}" th:value="${k.id}"
                             th:text="${k.osoba.imie + ' ' + k.osoba.nazwisko + ' (' + k.numerKlienta + ')'}"></option>
                 </select>
             </div>
             <div class="col-md-6">
-                <label class="form-label">Planowana data odbioru</label>
+                <label class="form-label">Data od</label>
                 <input type="date" class="form-control" th:field="*{dataOd}">
             </div>
             <div class="col-md-6">
-                <label class="form-label">Planowana data zwrotu</label>
+                <label class="form-label">Data do</label>
                 <input type="date" class="form-control" th:field="*{dataDo}">
             </div>
         </div>

@@ -11,9 +11,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 
@@ -31,6 +33,12 @@ public class RezerwacjaController {
         this.klientService = klientService;
     }
 
+    @GetMapping
+    public String lista(Model model) {
+        model.addAttribute("rezerwacje", rezerwacjaService.lista());
+        return "rezerwacje";
+    }
+
     @GetMapping("/nowa")
     public String nowa(@RequestParam Long pojazdId, Model model) {
         RezerwacjaForm form = new RezerwacjaForm();
@@ -46,12 +54,23 @@ public class RezerwacjaController {
     public String utworz(@ModelAttribute("form") RezerwacjaForm form, Model model) {
         try {
             Rezerwacja rezerwacja = rezerwacjaService.zarezerwuj(form);
-            return "redirect:/flota?zarezerwowano=" + rezerwacja.getNumerRezerwacji();
+            return "redirect:/rezerwacja?zarezerwowano=" + rezerwacja.getNumerRezerwacji();
         } catch (BusinessException ex) {
             model.addAttribute("blad", ex.getMessage());
             wypelnijDane(model, form.getPojazdId());
             return "rezerwacja-nowa";
         }
+    }
+
+    @PostMapping("/{id}/anuluj")
+    public String anuluj(@PathVariable Long id, RedirectAttributes ra) {
+        try {
+            rezerwacjaService.anuluj(id);
+            ra.addFlashAttribute("komunikat", "Rezerwacja została anulowana.");
+        } catch (BusinessException ex) {
+            ra.addFlashAttribute("blad", ex.getMessage());
+        }
+        return "redirect:/rezerwacja";
     }
 
     private void wypelnijDane(Model model, Long pojazdId) {

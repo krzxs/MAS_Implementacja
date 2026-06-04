@@ -26,6 +26,7 @@
             <div class="navbar-nav">
                 <a class="nav-link" th:href="@{/flota}">Flota</a>
                 <a class="nav-link" th:href="@{/klienci}">Klienci</a>
+                <a class="nav-link" th:href="@{/rezerwacja}" th:if="${isKonsultant}">Rezerwacje</a>
                 <a class="nav-link" th:href="@{/cennik}" th:if="${isKierownik}">Cennik</a>
             </div>
             <div class="navbar-nav ms-auto align-items-lg-center" th:if="${zalogowany != null}">

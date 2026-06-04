@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pl">
+<head th:replace="~{fragments :: head('Rezerwacje')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+<div class="container my-4">
+    <h3 class="mb-3">Rezerwacje</h3>
+
+    <div th:if="${param.zarezerwowano}" class="alert alert-success">
+        Rezerwacja <span th:text="${param.zarezerwowano}"></span> została utworzona.
+    </div>
+    <div th:if="${komunikat}" class="alert alert-success" th:text="${komunikat}"></div>
+    <div th:if="${blad}" class="alert alert-danger" th:text="${blad}"></div>
+
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                <tr>
+                    <th>Numer</th><th>Klient</th><th>Pojazd</th><th>Okres (odbiór – zwrot)</th>
+                    <th>Status</th><th class="text-end">Akcja</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="r : ${rezerwacje}">
+                    <td th:text="${r.numerRezerwacji}"></td>
+                    <td th:text="${r.klient != null and r.klient.osoba != null ? r.klient.osoba.imie + ' ' + r.klient.osoba.nazwisko : '-'}"></td>
+                    <td th:text="${r.pojazd != null ? r.pojazd.marka + ' ' + r.pojazd.model + ' (' + r.pojazd.numerRejestracyjny + ')' : '-'}"></td>
+                    <td>
+                        <span th:text="${#temporals.format(r.planowanaDataOdbioru, 'dd.MM.yyyy')}"></span> –
+                        <span th:text="${#temporals.format(r.planowanaDataZwrotu, 'dd.MM.yyyy')}"></span>
+                    </td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${r.status.name()=='POTWIERDZONA'} ? 'bg-success' : (${r.status.name()=='OCZEKUJACA'} ? 'bg-info text-dark' : (${r.status.name()=='ZREALIZOWANA'} ? 'bg-dark' : 'bg-secondary'))"
+                              th:text="${r.status.opis}">Status</span>
+                    </td>
+                    <td class="text-end">
+                        <form th:if="${isKonsultant and (r.status.name()=='POTWIERDZONA' or r.status.name()=='OCZEKUJACA') and r.wypozyczenie == null}"
+                              method="post" th:action="@{/rezerwacja/{id}/anuluj(id=${r.id})}" class="d-inline"
+                              onsubmit="return confirm('Czy na pewno anulować tę rezerwację?');">
+                            <button class="btn btn-sm btn-outline-danger">Anuluj rezerwację</button>
+                        </form>
+                        <span th:unless="${isKonsultant and (r.status.name()=='POTWIERDZONA' or r.status.name()=='OCZEKUJACA') and r.wypozyczenie == null}"
+                              class="label-dim">-</span>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(rezerwacje)}">
+                    <td colspan="6" class="text-center label-dim py-3">Brak rezerwacji do wyświetlenia.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

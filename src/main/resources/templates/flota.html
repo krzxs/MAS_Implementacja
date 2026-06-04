@@ -4,9 +4,15 @@
 <body>
 <nav th:replace="~{fragments :: navbar}"></nav>
 <div class="container my-4">
-    <h3 class="mb-3">Flota pojazdów</h3>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="mb-0">Flota pojazdów</h3>
+        <a th:if="${isKierownik}" class="btn btn-primary btn-sm" th:href="@{/flota/nowy}">+ Dodaj pojazd</a>
+    </div>
 
-    <div th:if="${param.zarezerwowano}" class="alert alert-success">Rezerwacja została utworzona.</div>
+    <div th:if="${param.dodano}" class="alert alert-success">Pojazd został dodany do floty.</div>
+    <div th:if="${param.zapisano}" class="alert alert-success">Zapisano zmiany pojazdu.</div>
+    <div th:if="${komunikat}" class="alert alert-success" th:text="${komunikat}"></div>
+    <div th:if="${blad}" class="alert alert-danger" th:text="${blad}"></div>
 
     <form method="get" th:action="@{/flota}" class="row g-2 align-items-end mb-3">
         <div class="col-auto">
@@ -45,15 +51,34 @@
                               th:text="${poj.status.opis}">Status</span>
                     </td>
                     <td class="text-end">
-                        <a th:if="${poj.status.name()=='DOSTEPNY' and isKonsultant}" class="btn btn-sm btn-primary"
-                           th:href="@{/wypozyczenie/nowe(pojazdId=${poj.id})}">Wypożycz</a>
-                        <a th:if="${poj.status.name()=='DOSTEPNY' and isKonsultant}" class="btn btn-sm btn-outline-primary"
-                           th:href="@{/rezerwacja/nowa(pojazdId=${poj.id})}">Zarezerwuj</a>
-                        <form th:if="${poj.status.name()=='DOSTEPNY' and isKierownik}" method="post"
-                              th:action="@{/flota/{id}/serwis(id=${poj.id})}" class="d-inline">
-                            <button class="btn btn-sm btn-outline-secondary">Serwis</button>
-                        </form>
-                        <span th:unless="${poj.status.name()=='DOSTEPNY'}" class="label-dim">-</span>
+                        <div class="d-inline-flex flex-wrap gap-1 justify-content-end">
+                            <a th:if="${poj.status.name()=='DOSTEPNY' and isKonsultant}" class="btn btn-sm btn-primary"
+                               th:href="@{/wypozyczenie/nowe(pojazdId=${poj.id})}">Wypożycz</a>
+                            <a th:if="${poj.status.name()=='DOSTEPNY' and isKonsultant}" class="btn btn-sm btn-outline-primary"
+                               th:href="@{/rezerwacja/nowa(pojazdId=${poj.id})}">Zarezerwuj</a>
+
+                            <a th:if="${isKierownik}" class="btn btn-sm btn-outline-secondary"
+                               th:href="@{/flota/{id}/edycja(id=${poj.id})}">Edytuj</a>
+                            <form th:if="${poj.status.name()=='DOSTEPNY' and isKierownik}" method="post"
+                                  th:action="@{/flota/{id}/serwis(id=${poj.id})}" class="d-inline">
+                                <button class="btn btn-sm btn-outline-secondary">Serwis</button>
+                            </form>
+                            <form th:if="${poj.status.name()=='W_SERWISIE' and isKierownik}" method="post"
+                                  th:action="@{/flota/{id}/powrot(id=${poj.id})}" class="d-inline">
+                                <button class="btn btn-sm btn-success">Powrót z serwisu</button>
+                            </form>
+                            <form th:if="${isKierownik and poj.status.name()!='WYPOZYCZONY' and poj.status.name()!='WYCOFANY'}" method="post"
+                                  th:action="@{/flota/{id}/wycofaj(id=${poj.id})}" class="d-inline">
+                                <button class="btn btn-sm btn-outline-warning">Wycofaj</button>
+                            </form>
+                            <form th:if="${isKierownik}" method="post"
+                                  th:action="@{/flota/{id}/usun(id=${poj.id})}" class="d-inline"
+                                  onsubmit="return confirm('Czy na pewno usunąć ten pojazd? Operacji nie można cofnąć.');">
+                                <button class="btn btn-sm btn-outline-danger">Usuń</button>
+                            </form>
+
+                            <span th:if="${!isKierownik and !(poj.status.name()=='DOSTEPNY' and isKonsultant)}" class="label-dim">-</span>
+                        </div>
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(pojazdy)}">
