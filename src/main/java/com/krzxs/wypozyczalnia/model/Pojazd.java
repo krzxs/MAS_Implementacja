@@ -160,7 +160,7 @@ public abstract class Pojazd {
             }
         }
         for (Rezerwacja r : rezerwacje) {
-            if (r.getStatus() == StatusRezerwacji.POTWIERDZONA && okresyNachodza(dataOd, dataDo, r.getPlanowanaDataOdbioru(), r.getPlanowanaDataZwrotu())) {
+            if (r.getStatus() == StatusRezerwacji.POTWIERDZONA && okresyNachodza(dataOd, dataDo, r.getDataOd(), r.getDataDo())) {
                 return false;
             }
         }

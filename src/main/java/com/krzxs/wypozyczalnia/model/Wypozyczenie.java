@@ -11,7 +11,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -48,10 +47,6 @@ public class Wypozyczenie {
     @ManyToOne
     @JoinColumn(name = "ubezpieczenie_id")
     private Ubezpieczenie ubezpieczenie;
-
-    @OneToOne
-    @JoinColumn(name = "rezerwacja_id")
-    private Rezerwacja rezerwacja;
 
     @OneToMany(mappedBy = "wypozyczenie", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Platnosc> platnosci = new ArrayList<>();
@@ -138,14 +133,6 @@ public class Wypozyczenie {
 
     public void setUbezpieczenie(Ubezpieczenie ubezpieczenie) {
         this.ubezpieczenie = ubezpieczenie;
-    }
-
-    public Rezerwacja getRezerwacja() {
-        return rezerwacja;
-    }
-
-    public void setRezerwacja(Rezerwacja rezerwacja) {
-        this.rezerwacja = rezerwacja;
     }
 
     public List<Platnosc> getPlatnosci() {

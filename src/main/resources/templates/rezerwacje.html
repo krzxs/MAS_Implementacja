@@ -17,7 +17,7 @@
             <table class="table table-hover align-middle mb-0">
                 <thead>
                 <tr>
-                    <th>Numer</th><th>Klient</th><th>Pojazd</th><th>Okres (odbiór – zwrot)</th>
+                    <th>Numer</th><th>Klient</th><th>Pojazd</th><th>Okres (odbiór - zwrot)</th>
                     <th>Status</th><th class="text-end">Akcja</th>
                 </tr>
                 </thead>
@@ -27,8 +27,8 @@
                     <td th:text="${r.klient != null and r.klient.osoba != null ? r.klient.osoba.imie + ' ' + r.klient.osoba.nazwisko : '-'}"></td>
                     <td th:text="${r.pojazd != null ? r.pojazd.marka + ' ' + r.pojazd.model + ' (' + r.pojazd.numerRejestracyjny + ')' : '-'}"></td>
                     <td>
-                        <span th:text="${#temporals.format(r.planowanaDataOdbioru, 'dd.MM.yyyy')}"></span> –
-                        <span th:text="${#temporals.format(r.planowanaDataZwrotu, 'dd.MM.yyyy')}"></span>
+                        <span th:text="${#temporals.format(r.dataOd, 'dd.MM.yyyy')}"></span> -
+                        <span th:text="${#temporals.format(r.dataDo, 'dd.MM.yyyy')}"></span>
                     </td>
                     <td>
                         <span class="badge"
@@ -36,12 +36,12 @@
                               th:text="${r.status.opis}">Status</span>
                     </td>
                     <td class="text-end">
-                        <form th:if="${isKonsultant and (r.status.name()=='POTWIERDZONA' or r.status.name()=='OCZEKUJACA') and r.wypozyczenie == null}"
+                        <form th:if="${isKonsultant and (r.status.name()=='POTWIERDZONA' or r.status.name()=='OCZEKUJACA')}"
                               method="post" th:action="@{/rezerwacja/{id}/anuluj(id=${r.id})}" class="d-inline"
                               onsubmit="return confirm('Czy na pewno anulować tę rezerwację?');">
                             <button class="btn btn-sm btn-outline-danger">Anuluj rezerwację</button>
                         </form>
-                        <span th:unless="${isKonsultant and (r.status.name()=='POTWIERDZONA' or r.status.name()=='OCZEKUJACA') and r.wypozyczenie == null}"
+                        <span th:unless="${isKonsultant and (r.status.name()=='POTWIERDZONA' or r.status.name()=='OCZEKUJACA')}"
                               class="label-dim">-</span>
                     </td>
                 </tr>

@@ -35,7 +35,7 @@
                     <td th:text="${w.numerWypozyczenia}"></td>
                     <td th:text="${w.pojazd.marka + ' ' + w.pojazd.model}"></td>
                     <td>
-                        <span th:text="${#temporals.format(w.dataOd, 'dd.MM.yyyy')}"></span> –
+                        <span th:text="${#temporals.format(w.dataOd, 'dd.MM.yyyy')}"></span> -
                         <span th:text="${#temporals.format(w.dataDo, 'dd.MM.yyyy')}"></span>
                     </td>
                     <td class="text-center" th:text="${w.liczbaDni}"></td>
@@ -56,11 +56,6 @@
             </table>
         </div>
     </div>
-    <p class="label-dim mt-2">
-        Lista wypożyczeń pobrana przez nawigację po asocjacji Klient → Wypożyczenie
-        (kolekcja obiektowa, bez zapytania filtrującego ekstensję).
-    </p>
-
     <div class="mt-3">
         <a th:href="@{/klienci}" class="btn btn-link">← Wróć do listy klientów</a>
     </div>

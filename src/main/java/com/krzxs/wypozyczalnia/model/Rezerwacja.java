@@ -9,7 +9,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -23,8 +22,8 @@ public class Rezerwacja {
 
     private String numerRezerwacji;
     private LocalDateTime dataUtworzenia;
-    private LocalDate planowanaDataOdbioru;
-    private LocalDate planowanaDataZwrotu;
+    private LocalDate dataOd;
+    private LocalDate dataDo;
 
     @Enumerated(EnumType.STRING)
     private StatusRezerwacji status = StatusRezerwacji.OCZEKUJACA;
@@ -37,17 +36,14 @@ public class Rezerwacja {
     @JoinColumn(name = "pojazd_id")
     private Pojazd pojazd;
 
-    @OneToOne(mappedBy = "rezerwacja")
-    private Wypozyczenie wypozyczenie;
-
     public Rezerwacja() {
     }
 
     public Rezerwacja(String numerRezerwacji, LocalDateTime dataUtworzenia, LocalDate planowanaDataOdbioru, LocalDate planowanaDataZwrotu) {
         this.numerRezerwacji = numerRezerwacji;
         this.dataUtworzenia = dataUtworzenia;
-        this.planowanaDataOdbioru = planowanaDataOdbioru;
-        this.planowanaDataZwrotu = planowanaDataZwrotu;
+        this.dataOd = planowanaDataOdbioru;
+        this.dataDo = planowanaDataZwrotu;
     }
 
     public Long getId() {
@@ -70,20 +66,20 @@ public class Rezerwacja {
         this.dataUtworzenia = dataUtworzenia;
     }
 
-    public LocalDate getPlanowanaDataOdbioru() {
-        return planowanaDataOdbioru;
+    public LocalDate getDataOd() {
+        return dataOd;
     }
 
-    public void setPlanowanaDataOdbioru(LocalDate d) {
-        this.planowanaDataOdbioru = d;
+    public void setDataOd(LocalDate dataOd) {
+        this.dataOd = dataOd;
     }
 
-    public LocalDate getPlanowanaDataZwrotu() {
-        return planowanaDataZwrotu;
+    public LocalDate getDataDo() {
+        return dataDo;
     }
 
-    public void setPlanowanaDataZwrotu(LocalDate d) {
-        this.planowanaDataZwrotu = d;
+    public void setDataDo(LocalDate dataDo) {
+        this.dataDo = dataDo;
     }
 
     public StatusRezerwacji getStatus() {
@@ -108,14 +104,6 @@ public class Rezerwacja {
 
     public void setPojazd(Pojazd pojazd) {
         this.pojazd = pojazd;
-    }
-
-    public Wypozyczenie getWypozyczenie() {
-        return wypozyczenie;
-    }
-
-    public void setWypozyczenie(Wypozyczenie wypozyczenie) {
-        this.wypozyczenie = wypozyczenie;
     }
 
     public void potwierdz() {

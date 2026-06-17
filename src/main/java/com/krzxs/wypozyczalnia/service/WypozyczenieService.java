@@ -64,8 +64,8 @@ public class WypozyczenieService {
         if (form.getDataOd().isAfter(form.getDataDo())) {
             throw new BusinessException("Data początkowa nie może być późniejsza niż data końcowa.");
         }
-        if (form.getDataOd().isBefore(LocalDate.now())) {
-            throw new BusinessException("Data początkowa nie może być w przeszłości.");
+        if (!form.getDataOd().isEqual(LocalDate.now())) {
+            throw new BusinessException("Wypożyczenie może rozpocząć się wyłącznie w dniu dzisiejszym. Aby zaplanować termin w przyszłości, skorzystaj z rezerwacji.");
         }
         if (!klient.prawoJazdyWazne(form.getDataDo())) {
             throw new BusinessException("Prawo jazdy klienta jest nieważne w okresie wypożyczenia.");
@@ -106,12 +106,8 @@ public class WypozyczenieService {
 
     @Transactional(readOnly = true)
     public Wypozyczenie znajdz(Long id) {
-        Wypozyczenie wypozyczenie = wypozyczenieRepository.findById(id)
+        return wypozyczenieRepository.findById(id)
                 .orElseThrow(() -> new BusinessException("Nie znaleziono wypożyczenia."));
-        wypozyczenie.getWypozyczenieDodatki().size();
-        wypozyczenie.getPlatnosci().size();
-        wypozyczenie.getSzkody().size();
-        return wypozyczenie;
     }
 
     @Transactional

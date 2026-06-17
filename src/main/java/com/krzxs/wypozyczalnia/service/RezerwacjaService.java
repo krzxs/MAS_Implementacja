@@ -80,9 +80,6 @@ public class RezerwacjaService {
         if (rezerwacja.getStatus() == StatusRezerwacji.ZREALIZOWANA) {
             throw new BusinessException("Nie można anulować zrealizowanej rezerwacji.");
         }
-        if (rezerwacja.getWypozyczenie() != null) {
-            throw new BusinessException("Rezerwacja została zamieniona na wypożyczenie i nie może być anulowana.");
-        }
 
         rezerwacja.anuluj();
 
