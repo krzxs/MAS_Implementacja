@@ -1,5 +1,6 @@
 package com.krzxs.wypozyczalnia.model;
 
+import com.krzxs.wypozyczalnia.exception.BusinessException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -97,7 +98,7 @@ public class Osoba {
 
     public int getWiek() {
         if (dataUrodzenia == null) {
-            return 0;
+            throw new BusinessException("Brak daty urodzenia.");
         }
         return Period.between(dataUrodzenia, LocalDate.now()).getYears();
     }

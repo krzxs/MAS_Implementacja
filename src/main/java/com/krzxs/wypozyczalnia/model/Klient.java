@@ -74,8 +74,8 @@ public class Klient {
         return dataWaznosciPrawaJazdy;
     }
 
-    public void setDataWaznosciPrawaJazdy(LocalDate d) {
-        this.dataWaznosciPrawaJazdy = d;
+    public void setDataWaznosciPrawaJazdy(LocalDate dataWaznosciPrawaJazdy) {
+        this.dataWaznosciPrawaJazdy = dataWaznosciPrawaJazdy;
     }
 
     public Osoba getOsoba() {
